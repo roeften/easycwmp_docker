@@ -11,6 +11,7 @@ FROM ubuntu:16.04
 RUN apt-get update && \
 mkdir -p /opt/dev && \
 mkdir -p /opt/git && \
+apt-get -y install nano && \
 apt-get -y install git && \
 git clone git://github.com/json-c/json-c.git /opt/git/json-c && \
 cd /opt/git/json-c/ && \
@@ -48,7 +49,7 @@ make && \
 make install && \
 ln -sf /usr/local/sbin/ubusd /usr/sbin/ubusd && \
 ln -sf /usr/local/lib/libubus.so /usr/lib/libubus.so && \
-git clone https://github.com/pivasoftware/microxml.git /opt/git/microxml && \
+git clone git://github.com/pivasoftware/microxml.git /opt/git/microxml && \
 cd /opt/git/microxml/ && \
 autoconf -i && \
 ./configure --prefix=/usr --enable-threads --enable-shared --enable-static && \
@@ -58,9 +59,9 @@ ln -sf /usr/lib/libmicroxml.so.1.0 /lib/libmicroxml.so && \
 ln -sf /usr/lib/libmicroxml.so.1.0 /lib/libmicroxml.so.1 && \
 cd /opt/dev/ && \
 apt-get install -y wget && \
-wget http://easycwmp.org/download/easycwmp-1.5.2.tar.gz && \
-tar -xzvf easycwmp-1.5.2.tar.gz  && \
-mv easycwmp-1.5.2 easycwmp && \
+wget http://easycwmp.org/download/easycwmp-1.6.1.tar.gz && \
+tar -xzvf easycwmp-1.6.1.tar.gz  && \
+mv easycwmp-1.6.1 easycwmp && \
 rm /opt/dev/easycwmp/ext/openwrt/config/easycwmp
 ADD easycwmp /opt/dev/easycwmp/ext/openwrt/config/
 RUN cd /opt/dev/easycwmp/ && \
