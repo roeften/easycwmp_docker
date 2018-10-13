@@ -1,0 +1,32 @@
+#!/bin/sh
+
+prefix_list="$prefix_list $DMROOT.Services.VoiceService."
+entry_execute_method_list="$entry_execute_method_list entry_execute_method_root_VoiceService"
+entry_execute_method_list_forcedinform="$entry_execute_method_list_forcedinform entry_execute_method_root_VoiceService"
+
+
+entry_execute_method_root_VoiceService() {
+	case "$1" in ""|"$DMROOT."|"$DMROOT.VoiceService.1.VoiceProfile.1.Line.1.SIP."*)
+		common_execute_method_param "$DMROOT.VoiceService.1.VoiceProfile.1.Line.1.SIP.AuthUsername" "0" "voice_get_username" "voice_set_username" ""
+		common_execute_method_param "$DMROOT.VoiceService.1.VoiceProfile.1.Line.1.SIP.AuthPassword" "0" "voice_get_password" "voice_set_password" ""
+		return 0
+		;;
+	esac
+	return $E_INVALID_PARAMETER_NAME;
+}
+
+voice_get_username() {
+	local val=`$UCI_GET sip.connection.username`
+	echo "$val"
+}
+voice_set_username() {
+	$UCI_SET sip.connection.username="$1"
+}
+voice_get_password() {
+        local val=`$UCI_GET sip.connection.password`
+        echo "$val"
+}
+voice_set_password() {
+	$UCI_SET sip.connection.password="$1"
+}
+

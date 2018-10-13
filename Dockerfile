@@ -61,6 +61,10 @@ ln -sf /usr/lib/libmicroxml.so.1.0 /lib/libmicroxml.so.1 && \
 cd /opt/dev/ && \
 apt-get install -y wget 
 ADD easywmpver /tmp 
+ARG USERNAME=
+ARG PASSWORD=
+ARG URL=http://127.0.0.1:7547/
+ARG MODEL=tr098
 RUN chmod +x /tmp/easywmpver && \
 export EASYCWMPF=$(/tmp/easywmpver) && \
 export EASYCWMPV=${EASYCWMPF%*.tar.gz} && \
@@ -79,18 +83,19 @@ autoreconf -i && \
 make && \
 mkdir -p /usr/share/easycwmp/functions && \
 mkdir -p /etc/easycwmp && \
-ln -sf /opt/dev/easycwmp/ext/openwrt/scripts/easycwmp.sh /usr/sbin/easycwmp && \
-ln -sf /opt/dev/easycwmp/ext/openwrt/scripts/defaults /usr/share/easycwmp/defaults && \
-ln -sf /opt/dev/easycwmp/ext/openwrt/scripts/functions/common/common /usr/share/easycwmp/functions/common && \
-ln -sf /opt/dev/easycwmp/ext/openwrt/scripts/functions/common/device_info /usr/share/easycwmp/functions/device_info && \
-ln -sf /opt/dev/easycwmp/ext/openwrt/scripts/functions/common/management_server /usr/share/easycwmp/functions/management_server && \
-ln -sf /opt/dev/easycwmp/ext/openwrt/scripts/functions/common/ipping_launch /usr/share/easycwmp/functions/ipping_launch && \
-ln -sf /opt/dev/easycwmp/ext/openwrt/scripts/functions/tr181/root /usr/share/easycwmp/functions/root && \
-ln -sf /opt/dev/easycwmp/ext/openwrt/scripts/functions/tr181/ip /usr/share/easycwmp/functions/ip && \
-ln -sf /opt/dev/easycwmp/ext/openwrt/scripts/functions/tr181/ipping_diagnostic /usr/share/easycwmp/functions/ipping_diagnostic && \
+cp /opt/dev/easycwmp/ext/openwrt/scripts/easycwmp.sh /usr/sbin/easycwmp && \
+cp /opt/dev/easycwmp/ext/openwrt/scripts/defaults /usr/share/easycwmp/defaults && \
+cp /opt/dev/easycwmp/ext/openwrt/scripts/functions/common/common /usr/share/easycwmp/functions/common && \
+cp /opt/dev/easycwmp/ext/openwrt/scripts/functions/common/device_info /usr/share/easycwmp/functions/device_info && \
+cp /opt/dev/easycwmp/ext/openwrt/scripts/functions/common/management_server /usr/share/easycwmp/functions/management_server && \
+cp /opt/dev/easycwmp/ext/openwrt/scripts/functions/common/ipping_launch /usr/share/easycwmp/functions/ipping_launch && \
+cp /opt/dev/easycwmp/ext/openwrt/scripts/functions/$MODEL/* /usr/share/easycwmp/functions/ && \
 chmod +x /opt/dev/easycwmp/ext/openwrt/scripts/functions/* && \
 mkdir /etc/config && \
-ln -sf /opt/dev/easycwmp/ext/openwrt/config/easycwmp /etc/config/easycwmp && \
+cp -f /opt/dev/easycwmp/ext/openwrt/config/easycwmp /etc/config/easycwmp && \
+sed -i 's/username[ ]*$/username '"$USERNAME"'/g' /etc/config/easycwmp && \
+sed -i 's|password[ ]*$|password '"$PASSWORD"'|g' /etc/config/easycwmp && \
+sed -i 's|url.*$|url '"$URL"'|g' /etc/config/easycwmp && \
 ln -sf /opt/dev/easycwmp/bin/easycwmpd /usr/sbin/easycwmpd && \
 export UCI_CONFIG_DIR="/opt/dev/easycwmp/ext/openwrt/config/" && \
 export UBUS_SOCKET="/var/run/ubus.sock" && \
@@ -103,6 +108,8 @@ export PATH=$PATH:/usr/sbin:/sbin && \
 ln -sf bash /bin/sh
 ADD startup.sh /
 
+ADD voice_service /usr/share/easycwmp/functions/
+RUN chmod +x /usr/share/easycwmp/functions/voice_service
 ENTRYPOINT ["sh"] 
 CMD ["/startup.sh"]
 
