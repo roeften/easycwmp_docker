@@ -8,6 +8,7 @@
 FROM ubuntu:16.04
 
 # Install.
+
 RUN apt-get update && \
 mkdir -p /opt/dev && \
 mkdir -p /opt/git && \
@@ -58,18 +59,21 @@ make install && \
 ln -sf /usr/lib/libmicroxml.so.1.0 /lib/libmicroxml.so && \
 ln -sf /usr/lib/libmicroxml.so.1.0 /lib/libmicroxml.so.1 && \
 cd /opt/dev/ && \
-apt-get install -y wget && \
-ADD easywmpver /tmp
-chmod +x /tmp/easywmpver
-export EASYCWMPF=$(/tmp/easywmpver)
-export EASYCWMPV=${EASYCWMPF%*.tar.gz}
-wget $EASYCWMPF && \
+apt-get install -y wget 
+ADD easywmpver /tmp 
+RUN chmod +x /tmp/easywmpver && \
+export EASYCWMPF=$(/tmp/easywmpver) && \
+export EASYCWMPV=${EASYCWMPF%*.tar.gz} && \
+wget http://www.easycwmp.org/download/$EASYCWMPF && \
 tar -xzvf $EASYCWMPF  && \
-mv $EASYCWMPV easycwmp && \
-rm /opt/dev/easycwmp/ext/openwrt/config/easycwmp
+mv $EASYCWMPV /opt/dev/easycwmp
+#RUN rm /opt/dev/easycwmp/ext/openwrt/config/easycwmp 
 ADD easycwmp /opt/dev/easycwmp/ext/openwrt/config/
-RUN cd /opt/dev/easycwmp/ && \
-apt-get install -y libcurl4-gnutls-dev && \
+RUN apt-get install -y libcurl4-gnutls-dev 
+RUN cd /opt/dev/easycwmp && \
+libtoolize --force && \
+aclocal && \
+automake --force-missing --add-missing && \
 autoreconf -i && \
 ./configure --enable-debug --enable-devel --enable-acs=multi --enable-jsonc=1 && \
 make && \
