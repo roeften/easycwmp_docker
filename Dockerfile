@@ -59,9 +59,13 @@ ln -sf /usr/lib/libmicroxml.so.1.0 /lib/libmicroxml.so && \
 ln -sf /usr/lib/libmicroxml.so.1.0 /lib/libmicroxml.so.1 && \
 cd /opt/dev/ && \
 apt-get install -y wget && \
-wget http://easycwmp.org/download/easycwmp-1.6.1.tar.gz && \
-tar -xzvf easycwmp-1.6.1.tar.gz  && \
-mv easycwmp-1.6.1 easycwmp && \
+ADD easywmpver /tmp
+chmod +x /tmp/easywmpver
+export EASYCWMPF=$(/tmp/easywmpver)
+export EASYCWMPV=${EASYCWMPF%*.tar.gz}
+wget $EASYCWMPF && \
+tar -xzvf $EASYCWMPF  && \
+mv $EASYCWMPV easycwmp && \
 rm /opt/dev/easycwmp/ext/openwrt/config/easycwmp
 ADD easycwmp /opt/dev/easycwmp/ext/openwrt/config/
 RUN cd /opt/dev/easycwmp/ && \

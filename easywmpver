@@ -1,0 +1,30 @@
+#!/bin/bash
+
+VURL=http://www.easycwmp.org/easycwmp-versions.php?name=easy
+
+VERSIONS=$(wget -q -O - $VURL)
+
+VERSION=""
+for V in $VERSIONS; do
+
+    if [ ! -z "$V" ]; then
+        VERSION=$V
+    fi
+done
+
+OIFS=$IFS
+IFS=','
+
+for V in $VERSION; do
+    VERSION=$V
+    break
+done
+FS=$OIFS
+
+
+if [[ ! $VERSION =~ ^easycwmp-[0-9.]+(tar\.)?+gz|xz$ ]]; then
+    VERSION="easycwmp-1.8.0.tar.gz"
+fi
+
+echo -n "$VERSION"
+
